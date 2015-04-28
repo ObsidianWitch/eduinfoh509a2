@@ -1,28 +1,52 @@
-<?xml version="1.0"?>
-<xsl:stylesheet version="2.0"
-  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-  xmlns:x="dblp-excerpt.xml">
+<?xml version="1.0" encoding="UTF-8"?>
 
-  <xsl:template match="/">
-      <html>
-         <head>
-            <title><xsl:value-of select="comment()[1]"/></title>
-         </head>
-         <body>
-            <h1><xsl:value-of select="comment()[1]"/></h1>
-            <h2>Books:</h2>
-            <ol><xsl:apply-templates select="dblp/book"/></ol>
-            <h2>Journal papers:</h2>
-            <ol><xsl:apply-templates select="dblp/article"/></ol>
-         </body>
-      </html>
-   </xsl:template>
-
-   <xsl:template match="dblp/book">
-      <li><xsl:apply-templates/></li>
-   </xsl:template>
-
-   <xsl:template match="dblp/article">
-      <li><xsl:apply-templates/></li>
-   </xsl:template>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+	<xsl:template match="/">
+		<html>
+			 <body>
+				<xsl:for-each select="dblp/article">
+					<xsl:sort select="author"></xsl:sort>
+						<xsl:if test="author!=preceding-sibling::article[1]/author"> <!--This condition is not correct-->
+							<xsl:call-template name="author_header"></xsl:call-template>
+						</xsl:if>
+				</xsl:for-each>
+			 </body>
+		</html>
+	</xsl:template>
+	<xsl:template name="author_header">
+		<h1><xsl:value-of select="author"/></h1>
+			<p>
+     			<table border="1">
+     				<xsl:call-template name="author_publication"></xsl:call-template>
+     			</table>
+     		</p>
+	</xsl:template>
+	<xsl:template name="author_publication">
+	<tr><th colspan="3" bgcolor="#FFFFCC"><xsl:value-of select="year"/></th></tr>
+     		<tr>
+     			<td align="right" valign="top"><a name="p5"/><xsl:value-of select="number"/></td>
+     			<td valign="top">
+     				<a>
+     				<xsl:attribute name="href"><xsl:value-of select="ee"/></xsl:attribute>
+     				<img  border="0" height="16" width="16"  src="http://www.informatik.uni-trier.de/~ley/db/ee.gif"><!--Where are the gifs addresses??-->
+     				<xsl:attribute name="title">
+     					<xsl:value-of select="title"/>
+     				</xsl:attribute>
+     				</img>
+     				</a>
+     			</td>
+     			<td>
+     					<xsl:for-each select="author">
+     					<a>
+     					<xsl:attribute name="href">
+   							<!--Name of the author in the DBLP file-->
+     					</xsl:attribute>
+     					</a>
+     					<xsl:value-of select="."/>,
+     					</xsl:for-each>
+     					<xsl:value-of select="title"/>
+     					<!--With the same method (value-of) you can insert other required informations-->
+     			</td>
+     		</tr>
+	</xsl:template>
 </xsl:stylesheet>
