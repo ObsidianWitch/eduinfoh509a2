@@ -48,12 +48,10 @@
      			</td>
      			<td>
      					<xsl:for-each select="author">
-     					<a>
-     					<xsl:attribute name="href">
-   							<!--Name of the author in the DBLP file-->
-     					</xsl:attribute>
-     					</a>
-     					<xsl:value-of select="."/>,
+								<a href="{.}.html">
+
+     					<xsl:value-of select="."/>
+						</a>,
      					</xsl:for-each>
      					<xsl:value-of select="title"/>
      					<!--With the same method (value-of) you can insert other required informations-->
