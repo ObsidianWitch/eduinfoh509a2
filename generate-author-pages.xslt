@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="3.0">
 	<xsl:template match="/">
+        <xsl:variable name="dblp" select="/"/>
+        
         <xsl:for-each select="distinct-values(dblp/*/author)">
             <xsl:result-document href="a-tree/{substring(.,1,1)}/{.}.html">
                 <html>
@@ -9,7 +11,11 @@
                     </head>
                     <body>
                         <xsl:call-template name="author_header"/>
-                        <xsl:call-template name="author_publication"/>
+                        <xsl:value-of select="$dblp/dblp/*[author = string(.)]"/>
+                        
+                        <!--<xsl:call-template name="author_publication">
+                            <xsl:with-param name="publications" select="$dblp/*[author = .]"/>
+                        </xsl:call-template>-->
                     </body>
                 </html>
             </xsl:result-document>
@@ -23,10 +29,16 @@
 	</xsl:template>
 
 	<xsl:template name="author_publication">
-    <p>
-        <table border="1">
-            TODO
-        </table>
-    </p>
+        <xsl:param name="publications"/>
+        <p>
+            <xsl:value-of select="$publications"/>
+            <!--<table border="1">
+                <xsl:for-each select="$publications">
+                    <tr>
+                        <td><xsl:value-of select="//title"/></td>
+                    </tr>
+                </xsl:for-each>
+            </table>-->
+        </p>
 	</xsl:template>
 </xsl:stylesheet>
