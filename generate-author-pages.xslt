@@ -17,24 +17,7 @@
                 </html>
             </xsl:result-document>
         </xsl:for-each-group>
-        
-        <!--<xsl:for-each select="distinct-values(dblp/*/author)">
-            <xsl:result-document href="a-tree/{substring(.,1,1)}/{.}.html">
-                <html>
-                    <head>
-                        <title>Publication of <xsl:value-of select="."/></title>
-                    </head>
-                    <body>
-                        <xsl:call-template name="author_header"/>
-                        
-                        <xsl:call-template name="author_publication">
-                            <xsl:with-param name="publications" select="$dblp/*[author = .]"/>
-                        </xsl:call-template>
-                    </body>
-                </html>
-            </xsl:result-document>
-        </xsl:for-each>-->
-        
+
         <!-- TODO e-tree for editors -->
 	</xsl:template>
 
