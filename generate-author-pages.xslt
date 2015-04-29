@@ -3,7 +3,24 @@
 	<xsl:template match="/">
         <xsl:variable name="dblp" select="/"/>
         
-        <xsl:for-each select="distinct-values(dblp/*/author)">
+        <xsl:for-each-group select="/dblp/*/author" group-by=".">
+            <xsl:sort select="current-grouping-key()"/>
+            <xsl:variable name="author" select="current-grouping-key()"/>
+
+            <xsl:result-document href="a-tree/{substring($author,1,1)}/{$author}.html">
+                <html>
+                    <head>
+                        <title>Publication of <xsl:value-of select="$author"/></title>
+                    </head>
+                    <body>
+                        <xsl:call-template name="author_header"/>
+                        <xsl:call-template name="author_publication"/>
+                    </body>
+                </html>
+            </xsl:result-document>
+        </xsl:for-each-group>
+        
+        <!--<xsl:for-each select="distinct-values(dblp/*/author)">
             <xsl:result-document href="a-tree/{substring(.,1,1)}/{.}.html">
                 <html>
                     <head>
@@ -11,34 +28,32 @@
                     </head>
                     <body>
                         <xsl:call-template name="author_header"/>
-                        <xsl:value-of select="$dblp/dblp/*[author = string(.)]"/>
                         
-                        <!--<xsl:call-template name="author_publication">
+                        <xsl:call-template name="author_publication">
                             <xsl:with-param name="publications" select="$dblp/*[author = .]"/>
-                        </xsl:call-template>-->
+                        </xsl:call-template>
                     </body>
                 </html>
             </xsl:result-document>
-        </xsl:for-each>
+        </xsl:for-each>-->
         
         <!-- TODO e-tree for editors -->
 	</xsl:template>
 
 	<xsl:template name="author_header">
-		<h1><xsl:value-of select="."/></h1>
+        <xsl:variable name="author" select="current-grouping-key()"/>
+		<h1><xsl:value-of select="$author"/></h1>
 	</xsl:template>
 
 	<xsl:template name="author_publication">
-        <xsl:param name="publications"/>
         <p>
-            <xsl:value-of select="$publications"/>
-            <!--<table border="1">
-                <xsl:for-each select="$publications">
+            <table border="1">
+                <xsl:for-each select="/dblp/*[author = current-grouping-key()]">
                     <tr>
-                        <td><xsl:value-of select="//title"/></td>
+                        <td><xsl:value-of select="title"/></td>
                     </tr>
                 </xsl:for-each>
-            </table>-->
+            </table>
         </p>
 	</xsl:template>
 </xsl:stylesheet>
