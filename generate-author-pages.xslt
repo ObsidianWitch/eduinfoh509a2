@@ -30,6 +30,10 @@
         <p>
             <table border="1">
                 <xsl:for-each select="/dblp/*[author = current-grouping-key()]">
+                    <xsl:sort select="year"/>
+                    <tr><th colspan="3" bgcolor="#FFFFCC">
+                        <xsl:value-of select="year"/></th>
+                    </tr>
                     <tr>
                         <td><xsl:value-of select="title"/></td>
                     </tr>
