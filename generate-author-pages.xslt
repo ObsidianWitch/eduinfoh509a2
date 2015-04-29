@@ -29,15 +29,18 @@
 	<xsl:template name="author_publication">
         <p>
             <table border="1">
-                <xsl:for-each select="/dblp/*[author = current-grouping-key()]">
-                    <xsl:sort select="year"/>
+                <xsl:for-each-group select="/dblp/*[author = current-grouping-key()]"
+                        group-by="year">
+                    <xsl:sort select="year" order="descending" />
                     <tr><th colspan="3" bgcolor="#FFFFCC">
                         <xsl:value-of select="year"/></th>
                     </tr>
+                    <xsl:for-each select="current-group()">
                     <tr>
                         <td><xsl:value-of select="title"/></td>
                     </tr>
-                </xsl:for-each>
+                    </xsl:for-each>
+                </xsl:for-each-group>
             </table>
         </p>
 	</xsl:template>
