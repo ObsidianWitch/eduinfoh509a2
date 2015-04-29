@@ -58,7 +58,9 @@
                 <a name="p{$position}"/>
                 <xsl:value-of select="$position"/>
             </td>
-            <!-- TODO link to ee -->
+            <td valign="top">
+                <xsl:apply-templates select="ee"/>
+            </td>
             <td>
                 <xsl:apply-templates select="author"/>
                 <xsl:value-of select="title"/>
@@ -68,6 +70,15 @@
         </tr>
     </xsl:template>
     
+    <!-- Electronic Edition -->
+    <xsl:template match="ee">
+        <a href="{.}">
+            <img alt="Electronic Edition" title="Electronic Edition"
+                src="http://www.informatik.uni-trier.de/~ley/db/ee.gif"
+                border="0" height="16" width="16"/>
+        </a>
+    </xsl:template>
+
     <xsl:template match="author">
         <xsl:value-of select="."/>
         
