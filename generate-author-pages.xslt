@@ -36,12 +36,31 @@
                         <xsl:value-of select="year"/></th>
                     </tr>
                     <xsl:for-each select="current-group()">
-                    <tr>
-                        <td><xsl:value-of select="title"/></td>
-                    </tr>
+                        <xsl:call-template name="publication"/>
                     </xsl:for-each>
                 </xsl:for-each-group>
             </table>
         </p>
 	</xsl:template>
+    
+    <xsl:template name="publication">
+        <tr>
+            <!-- TODO publication number -->
+            <!-- TODO link to ee -->
+            <td>
+                <xsl:apply-templates select="author"/>
+                <xsl:value-of select="title"/>
+                <!-- TODO -->
+            </td>
+        </tr>
+    </xsl:template>
+    
+    <xsl:template match="author">
+        <xsl:value-of select="."/>
+        
+        <xsl:choose>
+            <xsl:when test="following-sibling::author">, </xsl:when>
+            <xsl:otherwise>: </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
 </xsl:stylesheet>
