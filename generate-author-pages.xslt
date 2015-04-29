@@ -29,22 +29,35 @@
 	<xsl:template name="author_publication">
         <p>
             <table border="1">
-                <xsl:for-each-group select="/dblp/*[author = current-grouping-key()]"
-                        group-by="year">
+                <xsl:variable name="nbPublications"
+                    select="count(/dblp/*[author = current-grouping-key()])" />
+                <xsl:for-each select="/dblp/*[author = current-grouping-key()]">
                     <xsl:sort select="year" order="descending" />
-                    <tr><th colspan="3" bgcolor="#FFFFCC">
-                        <xsl:value-of select="year"/></th>
-                    </tr>
-                    <xsl:for-each select="current-group()">
-                        <xsl:call-template name="publication"/>
-                    </xsl:for-each>
-                </xsl:for-each-group>
+
+                    <xsl:if test="not(preceding-sibling/year = year)">
+                        <tr><th colspan="3" bgcolor="#FFFFCC">
+                            <xsl:value-of select="year"/></th>
+                        </tr>
+                    </xsl:if>
+
+                    <xsl:call-template name="publication">
+                        <xsl:with-param name="nbPublications"
+                            select="$nbPublications" />
+                    </xsl:call-template>
+                </xsl:for-each>
             </table>
         </p>
 	</xsl:template>
     
     <xsl:template name="publication">
+        <xsl:param name="nbPublications"/>
+        <xsl:variable name="position" select="$nbPublications - position() + 1"/>
+        
         <tr>
+            <td align="right" valign="top">
+                <a name="p{$position}"/>
+                <xsl:value-of select="$position"/>
+            </td>
             <!-- TODO publication number -->
             <!-- TODO link to ee -->
             <td>
