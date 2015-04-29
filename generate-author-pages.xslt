@@ -50,6 +50,7 @@
             <td>
                 <xsl:apply-templates select="author"/>
                 <xsl:value-of select="title"/>
+                <xsl:apply-templates select="journal"/>
                 <!-- TODO -->
             </td>
         </tr>
@@ -62,5 +63,11 @@
             <xsl:when test="following-sibling::author">, </xsl:when>
             <xsl:otherwise>: </xsl:otherwise>
         </xsl:choose>
+    </xsl:template>
+
+    <xsl:template match="journal">
+        <xsl:text> </xsl:text>
+        <xsl:value-of select="."/>: <xsl:value-of select="../pages"/>
+        (<xsl:value-of select="../year"/>)
     </xsl:template>
 </xsl:stylesheet>
