@@ -1,17 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+
+
+
 	<xsl:template match="/">
-		<html>
-			 <body>
+
 				<xsl:for-each select="dblp/article">
+
 					<xsl:sort select="author"></xsl:sort>
+					<xsl:result-document href="{author}.html">
+						<html>
+								<body>
+
 						<xsl:if test="author!=preceding-sibling::article[1]/author"> <!--This condition is not correct-->
 							<xsl:call-template name="author_header"></xsl:call-template>
 						</xsl:if>
+							</body>
+					</html>
+					</xsl:result-document>
 				</xsl:for-each>
-			 </body>
-		</html>
+
+
 	</xsl:template>
 	<xsl:template name="author_header">
 		<h1><xsl:value-of select="author"/></h1>
@@ -21,6 +31,7 @@
      			</table>
      		</p>
 	</xsl:template>
+
 	<xsl:template name="author_publication">
 	<tr><th colspan="3" bgcolor="#FFFFCC"><xsl:value-of select="year"/></th></tr>
      		<tr>
