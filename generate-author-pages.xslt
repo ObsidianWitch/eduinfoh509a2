@@ -58,7 +58,6 @@
                 <a name="p{$position}"/>
                 <xsl:value-of select="$position"/>
             </td>
-            <!-- TODO publication number -->
             <!-- TODO link to ee -->
             <td>
                 <xsl:apply-templates select="author"/>
