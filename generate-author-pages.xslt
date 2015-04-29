@@ -3,18 +3,26 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 
 	<xsl:template match="/">
-		<xsl:for-each select="dblp/article">
-			<xsl:sort select="author"></xsl:sort>
-			<xsl:result-document href="{author}.html">
-				<html>
-					<body>
-    					<xsl:if test="author != preceding-sibling::article[1]/author"> <!--This condition is not correct-->
-    						<xsl:call-template name="author_header"></xsl:call-template>
-    					</xsl:if>
-					</body>
-				</html>
-			</xsl:result-document>
-		</xsl:for-each>
+        <xsl:for-each select="distinct-values(dblp/*/author)">
+            <xsl:result-document href="a-tree/{substring(.,1,1)}/{.}.html">
+                test
+            </xsl:result-document>
+        </xsl:for-each>
+        
+        <!-- TODO e-tree for editors -->
+        
+        <!--<xsl:for-each select="dblp/article">
+            <xsl:sort select="author"></xsl:sort>
+            <xsl:result-document href="a-tree/{author}.html">
+                <html>
+                    <body>
+                        <xsl:if test="author != preceding-sibling::article[1]/author">
+                            <xsl:call-template name="author_header"></xsl:call-template>
+                        </xsl:if>
+                    </body>
+                </html>
+            </xsl:result-document>
+        </xsl:for-each>-->
 	</xsl:template>
 
 	<xsl:template name="author_header">
