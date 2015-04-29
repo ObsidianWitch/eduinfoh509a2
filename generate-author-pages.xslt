@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
-
 	<xsl:template match="/">
         <xsl:for-each select="distinct-values(dblp/*/author)">
             <xsl:result-document href="a-tree/{substring(.,1,1)}/{.}.html">
-                test
+                <html>
+                    <head>
+                        <title>Publication of <xsl:value-of select="."/></title>
+                    </head>
+                    <body>
+                        <h1><xsl:value-of select="."/></h1>
+                        <p>
+                            <table boder="1">
+                                TODO
+                            </table>
+                        </p>
+                    </body>
+                </html>
             </xsl:result-document>
         </xsl:for-each>
         
