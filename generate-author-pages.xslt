@@ -75,8 +75,7 @@
             <td>
                 <xsl:apply-templates select="author"/>
                 <em><xsl:value-of select="title"/></em>
-                <xsl:apply-templates select="self::book | self::incollection
-                    | self::inproceedings"/> <!-- TODO -->
+                <xsl:apply-templates select="."/>
             </td>
         </tr>
     </xsl:template>
@@ -94,6 +93,13 @@
         <xsl:text> </xsl:text>
         <xsl:value-of select="booktitle"/><xsl:text>: </xsl:text>
         <xsl:value-of select="pages"/>
+    </xsl:template>
+
+    <xsl:template match="article">
+        <xsl:text> </xsl:text>
+        <xsl:value-of select="journal"/><xsl:text>: </xsl:text>
+        <xsl:value-of select="pages"/><xsl:text> </xsl:text>
+        (<xsl:value-of select="year"/>)
     </xsl:template>
 
     <xsl:template match="author">
