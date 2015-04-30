@@ -75,7 +75,8 @@
             <td>
                 <xsl:apply-templates select="author"/>
                 <em><xsl:value-of select="title"/></em>
-                <xsl:apply-templates select="self::book"/> <!-- TODO -->
+                <xsl:apply-templates select="self::book | self::incollection
+                    | self::inproceedings"/> <!-- TODO -->
             </td>
         </tr>
     </xsl:template>
@@ -87,6 +88,12 @@
         <xsl:value-of select="publisher"/><xsl:text> </xsl:text>
         <xsl:value-of select="year"/>
         <xsl:apply-templates select="isbn"/>
+    </xsl:template>
+
+    <xsl:template match="incollection | inproceedings">
+        <xsl:text> </xsl:text>
+        <xsl:value-of select="booktitle"/><xsl:text>: </xsl:text>
+        <xsl:value-of select="pages"/>
     </xsl:template>
 
     <xsl:template match="author">
