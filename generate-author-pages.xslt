@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="2.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="2.0"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
 	<xsl:template match="/">
         <xsl:for-each-group select="/dblp/*/author" group-by=".">
             <xsl:sort select="current-grouping-key()"/>
@@ -27,14 +28,24 @@
 	</xsl:template>
 
 	<xsl:template name="author_publication">
+        <xsl:variable name="sortedYears" as="xs:integer*">
+            <xsl:perform-sort select="/dblp/*[author = current-grouping-key()]/year">
+                <xsl:sort select="." order="descending"/>
+            </xsl:perform-sort>
+        </xsl:variable>
+
+        <xsl:variable name="nbPublications"
+            select="count(/dblp/*[author = current-grouping-key()])" />
+
         <p>
             <table border="1">
-                <xsl:variable name="nbPublications"
-                    select="count(/dblp/*[author = current-grouping-key()])" />
                 <xsl:for-each select="/dblp/*[author = current-grouping-key()]">
                     <xsl:sort select="year" order="descending" />
 
-                    <xsl:if test="not(preceding-sibling/year = year)">
+                    <xsl:variable name="prevPosition" select="position() - 1"/>
+                    <xsl:variable name="prevYear" select="$sortedYears[$prevPosition]"/>
+
+                    <xsl:if test="not(year = $prevYear)">
                         <tr><th colspan="3" bgcolor="#FFFFCC">
                             <xsl:value-of select="year"/></th>
                         </tr>
@@ -93,4 +104,5 @@
         <xsl:value-of select="."/>: <xsl:value-of select="../pages"/>
         (<xsl:value-of select="../year"/>)
     </xsl:template>
+
 </xsl:stylesheet>
