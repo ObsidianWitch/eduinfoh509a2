@@ -102,6 +102,13 @@
         (<xsl:value-of select="year"/>)
     </xsl:template>
 
+    <xsl:template match="mastersthesis | phdthesis">
+        <xsl:text> </xsl:text>
+        <xsl:value-of select="school"/><xsl:text> </xsl:text>
+        <xsl:value-of select="year"/>
+        <xsl:apply-templates select="isbn"/>
+    </xsl:template>
+
     <xsl:template match="author">
         <xsl:value-of select="."/>
 
