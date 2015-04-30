@@ -59,11 +59,11 @@
             </table>
         </p>
 	</xsl:template>
-    
+
     <xsl:template name="publication">
         <xsl:param name="nbPublications"/>
         <xsl:variable name="position" select="$nbPublications - position() + 1"/>
-        
+
         <tr>
             <td align="right" valign="top">
                 <a name="p{$position}"/>
@@ -74,13 +74,30 @@
             </td>
             <td>
                 <xsl:apply-templates select="author"/>
-                <xsl:value-of select="title"/>
-                <xsl:apply-templates select="journal"/>
-                <!-- TODO -->
+                <em><xsl:value-of select="title"/></em>
+                <xsl:apply-templates select="self::book"/> <!-- TODO -->
             </td>
         </tr>
     </xsl:template>
-    
+
+    <xsl:template match="book">
+        <xsl:apply-templates select="series"/>
+        <xsl:apply-templates select="volume"/>
+        <xsl:text>, </xsl:text>
+        <xsl:value-of select="publisher"/><xsl:text> </xsl:text>
+        <xsl:value-of select="year"/>
+        <xsl:apply-templates select="isbn"/>
+    </xsl:template>
+
+    <xsl:template match="author">
+        <xsl:value-of select="."/>
+
+        <xsl:choose>
+            <xsl:when test="following-sibling::author">, </xsl:when>
+            <xsl:otherwise>: </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
     <!-- Electronic Edition -->
     <xsl:template match="ee">
         <a href="{.}">
@@ -90,19 +107,12 @@
         </a>
     </xsl:template>
 
-    <xsl:template match="author">
-        <xsl:value-of select="."/>
-        
-        <xsl:choose>
-            <xsl:when test="following-sibling::author">, </xsl:when>
-            <xsl:otherwise>: </xsl:otherwise>
-        </xsl:choose>
+    <xsl:template match="series | volume">
+        <xsl:text> </xsl:text><xsl:value-of select="."/>
     </xsl:template>
 
-    <xsl:template match="journal">
-        <xsl:text> </xsl:text>
-        <xsl:value-of select="."/>: <xsl:value-of select="../pages"/>
-        (<xsl:value-of select="../year"/>)
+    <xsl:template match="isbn">
+        <xsl:text>, ISBN </xsl:text><xsl:value-of select="."/>
     </xsl:template>
 
 </xsl:stylesheet>
