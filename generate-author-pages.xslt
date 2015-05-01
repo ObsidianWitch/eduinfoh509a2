@@ -102,7 +102,9 @@
                 <xsl:apply-templates select="ee"/>
             </td>
             <td>
-                <xsl:apply-templates select="author"/>
+                <xsl:apply-templates select="author">
+                    <xsl:with-param name="currentAuthor" select="current-grouping-key()"/>
+                </xsl:apply-templates>
                 <em><xsl:value-of select="title"/></em>
                 <xsl:apply-templates select="."/>
             </td>
@@ -138,8 +140,28 @@
         <xsl:apply-templates select="isbn"/>
     </xsl:template>
 
+    <!--
+      - TODO
+      -->
     <xsl:template match="author">
-        <xsl:value-of select="."/>
+        <xsl:param name="currentAuthor"/>
+
+        <xsl:variable name="formattedAuthor">
+            <xsl:value-of select="ufn:format_full_name(.)"/>
+        </xsl:variable>
+        <xsl:variable name="first_letter"
+            select="lower-case(substring($formattedAuthor,1,1))"/>
+
+        <xsl:choose>
+            <xsl:when test=". eq $currentAuthor">
+                <xsl:value-of select="."/>
+            </xsl:when>
+            <xsl:otherwise>
+                <a href="../{$first_letter}/{$formattedAuthor}.html">
+                    <xsl:value-of select="."/>
+                </a>
+            </xsl:otherwise>
+        </xsl:choose>
 
         <xsl:choose>
             <xsl:when test="following-sibling::author">, </xsl:when>
