@@ -11,7 +11,7 @@
         indent="yes" />
 
 	<xsl:template match="/">
-        <xsl:for-each-group select="/dblp/*/author" group-by=".">
+        <xsl:for-each-group select="/dblp/*/author | /dblp/*/editor" group-by=".">
             <xsl:sort select="current-grouping-key()"/>
 
             <xsl:variable name="author" select="current-grouping-key()"/>
@@ -33,8 +33,6 @@
                 </html>
             </xsl:result-document>
         </xsl:for-each-group>
-
-        <!-- TODO e-tree for editors -->
 	</xsl:template>
 
     <!--
@@ -71,11 +69,13 @@
         </xsl:variable>
 
         <xsl:variable name="nbPublications"
-            select="count(/dblp/*[author = current-grouping-key()])" />
+            select="count(/dblp/*[author = current-grouping-key()
+                or editor = current-grouping-key()])" />
 
         <p>
             <table border="1">
-                <xsl:for-each select="/dblp/*[author = current-grouping-key()]">
+                <xsl:for-each select="/dblp/*[author = current-grouping-key()
+                        or editor = current-grouping-key()]">
                     <xsl:sort select="year" order="descending" />
 
                     <xsl:variable name="prevPosition" select="position() - 1"/>
@@ -109,7 +109,7 @@
                 <xsl:apply-templates select="ee"/>
             </td>
             <td>
-                <xsl:apply-templates select="author">
+                <xsl:apply-templates select="author | editor">
                     <xsl:with-param name="currentAuthor" select="current-grouping-key()"/>
                 </xsl:apply-templates>
                 <em><xsl:value-of select="title"/></em>
@@ -147,10 +147,7 @@
         <xsl:apply-templates select="isbn"/>
     </xsl:template>
 
-    <!--
-      - TODO
-      -->
-    <xsl:template match="author">
+    <xsl:template match="author | editor">
         <xsl:param name="currentAuthor"/>
 
         <xsl:variable name="formattedAuthor">
