@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="2.0"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:ufn="urn:user.functions">
+
 	<xsl:template match="/">
         <xsl:for-each-group select="/dblp/*/author" group-by=".">
             <xsl:sort select="current-grouping-key()"/>
-            <xsl:variable name="author" select="current-grouping-key()"/>
 
-            <xsl:result-document href="a-tree/{substring($author,1,1)}/{$author}.html">
+            <xsl:variable name="author" select="current-grouping-key()"/>
+            <xsl:variable name="formattedAuthor">
+                <xsl:value-of select="ufn:format_full_name($author)"/>
+            </xsl:variable>
+            <xsl:variable name="first_letter"
+                select="lower-case(substring($formattedAuthor,1,1))"/>
+
+            <xsl:result-document href="a-tree/{$first_letter}/{$formattedAuthor}.html">
                 <html>
                     <head>
                         <title>Publication of <xsl:value-of select="$author"/></title>
@@ -21,6 +29,27 @@
 
         <!-- TODO e-tree for editors -->
 	</xsl:template>
+
+    <!--
+      - Format a full name in the following manner:
+      - Lastname.Firstname
+      - If the Firstname has multiple parts, they are concatenated with '_'. If
+      - one of these parts contains a '.' it is removed.
+      -->
+    <xsl:function name="ufn:format_full_name">
+        <xsl:param name="author"/>
+        <xsl:variable name="tokenizedAuthor" select="tokenize($author, ' ')"/>
+
+        <xsl:value-of select="$tokenizedAuthor[last()]"/><xsl:text>.</xsl:text>
+
+        <xsl:for-each select="$tokenizedAuthor">
+            <xsl:if test="not(position() = last())">
+                <xsl:value-of select="translate(., '.', '')"/>
+
+                <xsl:if test="not(position() = last() - 1)">_</xsl:if>
+            </xsl:if>
+        </xsl:for-each>
+    </xsl:function>
 
 	<xsl:template name="author_header">
         <xsl:variable name="author" select="current-grouping-key()"/>
