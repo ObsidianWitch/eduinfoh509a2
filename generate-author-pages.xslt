@@ -29,6 +29,7 @@
                     <body>
                         <xsl:call-template name="author_header"/>
                         <xsl:call-template name="author_publication"/>
+                        <xsl:call-template name="coauthor_index"/>
                     </body>
                 </html>
             </xsl:result-document>
@@ -63,7 +64,8 @@
 
 	<xsl:template name="author_publication">
         <xsl:variable name="sortedYears" as="xs:integer*">
-            <xsl:perform-sort select="/dblp/*[author = current-grouping-key()]/year">
+            <xsl:perform-sort select="/dblp/*[author = current-grouping-key()]/year |
+                /dblp/*[editor = current-grouping-key()]/year">
                 <xsl:sort select="." order="descending"/>
             </xsl:perform-sort>
         </xsl:variable>
@@ -96,14 +98,56 @@
         </p>
 	</xsl:template>
 
+    <xsl:template name="coauthor_index">
+        <h2>Co-author index</h2>
+
+        <xsl:variable name="sortedPublications">
+            <xsl:perform-sort select="/dblp/*[author = current-grouping-key()] |
+                /dblp/*[editor = current-grouping-key()]">
+                <xsl:sort select="year" order="descending"/>
+            </xsl:perform-sort>
+        </xsl:variable>
+
+        <p>
+            <table border="1">
+                <xsl:for-each select="distinct-values(
+                      $sortedPublications/*/author[not(. = current-grouping-key())]
+                    | $sortedPublications/*/editor[not(. = current-grouping-key())]
+                )">
+                    <xsl:variable name="currentAuthorEditor" select="."/>
+
+                    <tr>
+                        <td align="right"><xsl:value-of select="."/></td>
+                        <td align="left">
+                            <xsl:for-each select="$sortedPublications/*">
+                                <xsl:sort select="position()" data-type="number" order="descending"/>
+                                <xsl:variable name="position" select="position()"/>
+
+                                <xsl:for-each select="author | editor">
+                                    <xsl:if test="$currentAuthorEditor = .">
+                                        [<a href="#p{$position}">
+                                            <xsl:value-of select="$position"/>
+                                        </a>]
+                                    </xsl:if>
+                                </xsl:for-each>
+                            </xsl:for-each>
+                        </td>
+                    </tr>
+                </xsl:for-each>
+            </table>
+        </p>
+    </xsl:template>
+
+
     <xsl:template name="publication">
         <xsl:param name="nbPublications"/>
         <xsl:variable name="position" select="$nbPublications - position() + 1"/>
 
         <tr>
             <td align="right" valign="top">
-                <a name="p{$position}"/>
-                <xsl:value-of select="$position"/>
+                <a name="p{$position}">
+                    <xsl:value-of select="$position"/>
+                </a>
             </td>
             <td valign="top">
                 <xsl:apply-templates select="ee"/>
