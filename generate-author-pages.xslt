@@ -110,14 +110,18 @@
 
         <p>
             <table border="1">
-                <xsl:for-each select="distinct-values(
-                      $sortedPublications/*/author[not(. = current-grouping-key())]
-                    | $sortedPublications/*/editor[not(. = current-grouping-key())]
-                )">
-                    <xsl:variable name="currentAuthorEditor" select="."/>
+                <!--
+                   - Iterates over all coauthors & coeditors, excluding the
+                   - current author/editor
+                   -->
+                <xsl:for-each-group select="($sortedPublications/*/author
+                    | $sortedPublications/*/editor)[not(. = current-grouping-key())]"
+                    group-by="."
+                >
+                    <xsl:variable name="currentAuthorEditor" select="current-grouping-key()"/>
 
                     <tr>
-                        <td align="right"><xsl:value-of select="."/></td>
+                        <td align="right"><xsl:apply-templates select="."/></td>
                         <td align="left">
                             <xsl:for-each select="$sortedPublications/*">
                                 <xsl:sort select="position()" data-type="number" order="descending"/>
@@ -133,7 +137,7 @@
                             </xsl:for-each>
                         </td>
                     </tr>
-                </xsl:for-each>
+                </xsl:for-each-group>
             </table>
         </p>
     </xsl:template>
