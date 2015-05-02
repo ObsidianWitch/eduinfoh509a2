@@ -1,3 +1,53 @@
 \section{Implementation}
+
+For each person (author or editor) found in the dblp excerpt, we had to generate
+an HTML file with the following path:
+\hl{a-tree/first-letter-of-lastname/lastname.firstname.html}.\\
+
+First of all, we have to retrieve each distinct author and editor (there are
+multiple publications, so an author/editor can appear multiple times). In order
+to do so, the \hl{xsl:for-each-group} element was used, which lets us group
+elements and iterate over them. Here, we selected authors and editors, and
+grouped them by themselves.\\
+
+\begin{lstlisting}
+<xsl:template match="/">
+    <xsl:for-each-group select="/dblp/*/author | /dblp/*/editor" group-by=".">
+    ...
+    </xsl:for-each-group>
+</xsl:template>
+\end{lstlisting}
+\
+
+Then, for each author (or editor), we want to be able to create a file with the
+correct name. To do that, we created the \hl{ufn:format\_full\_name()} function
+which takes as parameter the full name of a person. The lastname is extracted
+and put in the first position. Then, if the first name has multiple parts, they
+are concatenated with '\_', and if '.' is present, it is then removed (e.g.
+\emph{A. B. M. Shawkat Ali} becomes \emph{Ali.A\_B\_M\_Shawkat}).\\
+
+Once the name is correctly formatted, we can use \hl{xsl:result-document} to
+produce a document per author/editor.\\
+
+\begin{lstlisting}
+<xsl:result-document href="a-tree/{$first_letter}/{$formattedAuthor}.html">
+    <html>
+        <head>
+            <title>Publication of <xsl:value-of select="$author"/></title>
+        </head>
+        <body>
+            <xsl:call-template name="author_header"/>
+            <xsl:call-template name="author_publication"/>
+            <xsl:call-template name="coauthor_index"/>
+        </body>
+    </html>
+</xsl:result-document>
+\end{lstlisting}
+
+\subsection{Publications}
+% TODO
+\newpage
+
+\subsection{Co-authors index}
 % TODO
 \newpage
