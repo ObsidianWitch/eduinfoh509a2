@@ -21,7 +21,7 @@ grouped them by themselves.\\
 
 Then, for each author (or editor), we want to be able to create a file with the
 correct name. To do that, we created the \hl{ufn:format\_full\_name()} function
-which takes as parameter the full name of a person. The lastname is extracted
+which takes as parameter the full name of a person. The last name is extracted
 and put in the first position. Then, if the first name has multiple parts, they
 are concatenated with '\_', and if '.' is present, it is then removed (e.g.
 \emph{A. B. M. Shawkat Ali} becomes \emph{Ali.A\_B\_M\_Shawkat}).\\
@@ -94,12 +94,12 @@ recursively though, but it would not have helped us).
 \
 
 Each publication is then handled inside the \emph{publication} named template.
-The position is computed with the position in the for eahh loop and the total
+The position is computed with the position in the for each loop and the total
 number of publications ($number of publications - position() + 1$). A template
 is applied on the publication itself in order to match one of the publication
 type (e.g. book, article, masterthesis). Inside of these publication types
 templates, templates are applied on sub-elements that can appear in these
-publications. By applying template, optionnal elements are handled easily.
+publications. By applying templates, optional elements are handled easily.
 \newpage
 
 \subsection{Co-authors index}
@@ -140,7 +140,7 @@ coauthor/coeditor and the sorted list of publications from the author.\\
 \
 
 Inside the \hl{ufn:coauthored\_publications()} function, author's publications
-are iterated over, and if the current coauthor/coeditor as participatd in this
+are iterated over, and if the current coauthor/coeditor as participated in this
 publication, then the publication number is displayed inside brackets.\\
 
 \begin{lstlisting}
