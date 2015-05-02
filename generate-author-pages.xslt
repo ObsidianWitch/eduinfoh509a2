@@ -137,8 +137,8 @@
     </xsl:template>
 
     <!--
-     - Gives the coauthored for the given coauthor/coeditor and the sorted list
-     - of publications (by year) from the author.
+     - Gives the coauthored publications for the given coauthor/coeditor and the
+     - sorted list of publications (by year) from the author.
      - Iterates over the sorted publications in reverse order, so that the
      - position() associated with the publication gives the correct publication
      - number.
