@@ -45,7 +45,61 @@ produce a document per author/editor.\\
 \end{lstlisting}
 
 \subsection{Publications}
-% TODO
+For each person, we store the publications' years in a variable. Then, we iterate
+over the publications sorted by year (descending). The variable previously stored let us
+retrieve for a publication $p$, the ${p-1}^{th}$ publication's year in order to
+know if we must display a year header.\\
+
+\begin{lstlisting}
+<xsl:template name="author_publication">
+    <xsl:variable name="sortedYears" as="xs:integer*">
+        <xsl:perform-sort select="/dblp/*[author = current-grouping-key()]/year |
+            /dblp/*[editor = current-grouping-key()]/year">
+            <xsl:sort select="." order="descending"/>
+        </xsl:perform-sort>
+    </xsl:variable>
+
+    ...
+
+    <xsl:for-each select="/dblp/*[author = current-grouping-key()
+            or editor = current-grouping-key()]">
+        <xsl:sort select="year" order="descending" />
+
+        <xsl:variable name="prevPosition" select="position() - 1"/>
+        <xsl:variable name="prevYear" select="$sortedYears[$prevPosition]"/>
+
+        <xsl:if test="not(year = $prevYear)">
+            <tr><th colspan="3" bgcolor="#FFFFCC">
+                <xsl:value-of select="year"/></th>
+            </tr>
+        </xsl:if>
+
+        ...
+    </xsl:for-each>
+\end{lstlisting}
+\
+
+\begin{framewarning}
+We tested other methods to try to display year headers. The first one used
+\hl{previous-sibling} in the \hl{for-each} loop, but it did not work, since the
+elements from the loop are sorted by year, and the axis returns elements as if
+they were not sorted. The second one used \hl{for-each-group}, grouped by year,
+and probably was more readable, less verbose than what is used now. But it was
+then hard to retrieve the publications' position, since the \hl{position()}
+function returned the position inside the group, and not inside all the author's
+publications. Moreover, since XSLT is a functional programming language, variables
+are immutable, so implementing a counter was not an option (it can be done
+recursively though, but it would not have helped us).
+\end{framewarning}
+\
+
+Each publication is then handled inside the \emph{publication} named template.
+The position is computed with the position in the for eahh loop and the total
+number of publications ($number of publications - position() + 1$). A template
+is applied on the publication itself in order to match one of the publication
+type (e.g. book, article, masterthesis). Inside of these publication types
+templates, templates are applied on sub-elements that can appear in these
+publications. By applying template, optionnal elements are handled easily.
 \newpage
 
 \subsection{Co-authors index}
