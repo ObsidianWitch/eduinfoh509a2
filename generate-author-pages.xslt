@@ -100,7 +100,13 @@
 
     <xsl:template name="coauthor_index">
         <h2>Co-author index</h2>
-
+        
+        <!--
+         - Retrieves all the publications for the current author/editor, and
+         - sorts them by year (descending) in order to be able to iterate over
+         - them in the same order they are currently displayed in the
+         - publications list.
+         -->
         <xsl:variable name="sortedPublications">
             <xsl:perform-sort select="/dblp/*[author = current-grouping-key()] |
                 /dblp/*[editor = current-grouping-key()]">
@@ -111,29 +117,32 @@
         <p>
             <table border="1">
                 <!--
-                   - Iterates over all coauthors & coeditors, excluding the
-                   - current author/editor
-                   -->
+                 - Iterates over all coauthors & coeditors, excluding the
+                 - current author/editor
+                 -->
                 <xsl:for-each-group select="($sortedPublications/*/author
                     | $sortedPublications/*/editor)[not(. = current-grouping-key())]"
                     group-by="."
                 >
-                    <xsl:variable name="currentAuthorEditor" select="current-grouping-key()"/>
+                    <xsl:variable name="currentCoAuthEd" select="."/>
 
                     <tr>
                         <td align="right"><xsl:apply-templates select="."/></td>
                         <td align="left">
+                            <!--
+                             - Iterates over the sorted publications in reverse
+                             - order, so that the position() associated with
+                             - the publication gives the correct publication
+                             - number
+                             -->
                             <xsl:for-each select="$sortedPublications/*">
                                 <xsl:sort select="position()" data-type="number" order="descending"/>
-                                <xsl:variable name="position" select="position()"/>
 
-                                <xsl:for-each select="author | editor">
-                                    <xsl:if test="$currentAuthorEditor = .">
-                                        [<a href="#p{$position}">
-                                            <xsl:value-of select="$position"/>
-                                        </a>]
-                                    </xsl:if>
-                                </xsl:for-each>
+                                <xsl:if test="(author | editor)[$currentCoAuthEd = .]">
+                                    [<a href="#p{position()}">
+                                        <xsl:value-of select="position()"/>
+                                    </a>]
+                                </xsl:if>
                             </xsl:for-each>
                         </td>
                     </tr>
@@ -141,7 +150,6 @@
             </table>
         </p>
     </xsl:template>
-
 
     <xsl:template name="publication">
         <xsl:param name="nbPublications"/>
