@@ -124,32 +124,39 @@
                     | $sortedPublications/*/editor)[not(. = current-grouping-key())]"
                     group-by="."
                 >
-                    <xsl:variable name="currentCoAuthEd" select="."/>
-
                     <tr>
                         <td align="right"><xsl:apply-templates select="."/></td>
                         <td align="left">
-                            <!--
-                             - Iterates over the sorted publications in reverse
-                             - order, so that the position() associated with
-                             - the publication gives the correct publication
-                             - number
-                             -->
-                            <xsl:for-each select="$sortedPublications/*">
-                                <xsl:sort select="position()" data-type="number" order="descending"/>
-
-                                <xsl:if test="(author | editor)[$currentCoAuthEd = .]">
-                                    [<a href="#p{position()}">
-                                        <xsl:value-of select="position()"/>
-                                    </a>]
-                                </xsl:if>
-                            </xsl:for-each>
+                            <xsl:sequence select="ufn:coauthored_publications(.,
+                                $sortedPublications)"/>
                         </td>
                     </tr>
                 </xsl:for-each-group>
             </table>
         </p>
     </xsl:template>
+
+    <!--
+     - Gives the coauthored for the given coauthor/coeditor and the sorted list
+     - of publications (by year) from the author.
+     - Iterates over the sorted publications in reverse order, so that the
+     - position() associated with the publication gives the correct publication
+     - number.
+     -->
+    <xsl:function name="ufn:coauthored_publications">
+        <xsl:param name="coAuthEd"/>
+        <xsl:param name="sortedPublications"/>
+
+        <xsl:for-each select="$sortedPublications/*">
+            <xsl:sort select="position()" data-type="number" order="descending"/>
+
+            <xsl:if test="(author | editor)[$coAuthEd = .]">
+                [<a href="#p{position()}">
+                    <xsl:value-of select="position()"/>
+                </a>]
+            </xsl:if>
+        </xsl:for-each>
+    </xsl:function>
 
     <xsl:template name="publication">
         <xsl:param name="nbPublications"/>
