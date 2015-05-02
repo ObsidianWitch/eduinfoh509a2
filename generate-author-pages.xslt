@@ -196,6 +196,11 @@
         <xsl:value-of select="pages"/>
     </xsl:template>
 
+    <xsl:template match="proceedings">
+        <xsl:value-of select="publisher"/>
+        <xsl:apply-templates select="isbn"/>
+    </xsl:template>
+
     <xsl:template match="article">
         <xsl:text> </xsl:text>
         <xsl:value-of select="journal"/><xsl:text>: </xsl:text>
