@@ -103,5 +103,60 @@ publications. By applying template, optionnal elements are handled easily.
 \newpage
 
 \subsection{Co-authors index}
-% TODO
+For the co-author index, publications are sorted by year and stored in a
+variable which will be used later.\\
+
+\begin{lstlisting}
+<xsl:variable name="sortedPublications">
+    <xsl:perform-sort select="/dblp/*[author = current-grouping-key()] |
+        /dblp/*[editor = current-grouping-key()]">
+        <xsl:sort select="year" order="descending"/>
+    </xsl:perform-sort>
+</xsl:variable>
+\end{lstlisting}
+\
+
+Then, coauthors/coeditors are grouped by themselves and iterated over with a
+\hl{xsl:for-each-group}. for each distinct coauthor/coeditor, his name is
+displayed in the left column of a table, and his coauthored publications
+are displayed in the right column. For the coauthored publications, the
+\hl{ufn:coauthored\_publications()} function is applied on the current
+coauthor/coeditor and the sorted list of publications from the author.\\
+
+\begin{lstlisting}
+<xsl:for-each-group select="($sortedPublications/*/author
+    | $sortedPublications/*/editor)[not(. = current-grouping-key())]"
+    group-by="."
+>
+    <tr>
+        <td align="right"><xsl:apply-templates select="."/></td>
+        <td align="left">
+            <xsl:sequence select="ufn:coauthored_publications(.,
+                $sortedPublications)"/>
+        </td>
+    </tr>
+</xsl:for-each-group>
+\end{lstlisting}
+\
+
+Inside the \hl{ufn:coauthored\_publications()} function, author's publications
+are iterated over, and if the current coauthor/coeditor as participatd in this
+publication, then the publication number is displayed inside brackets.\\
+
+\begin{lstlisting}
+<xsl:function name="ufn:coauthored_publications">
+    <xsl:param name="coAuthEd"/>
+    <xsl:param name="sortedPublications"/>
+
+    <xsl:for-each select="$sortedPublications/*">
+        <xsl:sort select="position()" data-type="number" order="descending"/>
+
+        <xsl:if test="(author | editor)[$coAuthEd = .]">
+            [<a href="#p{position()}">
+                <xsl:value-of select="position()"/>
+            </a>]
+        </xsl:if>
+    </xsl:for-each>
+</xsl:function>
+\end{lstlisting}
 \newpage
